@@ -84,10 +84,6 @@ function streamResult(slices) {
   return output;
 }
 
-function getSliceSice(slice) {
-  return (slice[1][0] - slice[0][0] + 1) * (slice[1][1] - slice[0][1] + 1);
-}
-
 function score(slices) {
   return slices.reduce((accumulator, slice) =>
     accumulator + getSliceSice(slice),
