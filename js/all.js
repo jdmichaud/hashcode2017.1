@@ -42,7 +42,7 @@ function applyAll() {
 
     console.log('\nTotal score:', totalScore, '\n');
 
-    let outputFolder = path.join(outputDir, Date.now() + ' ' + totalScore);
+    let outputFolder = path.join(outputDir, Date.now() + '_' + totalScore);
 
     fs.mkdirSync(outputFolder);
 
