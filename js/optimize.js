@@ -83,6 +83,8 @@ function rank_optimize(setup) {
   })
   // Filter empty allocation
   result.allocations = result.allocations.filter(allocation => allocation.videos.length > 0);
+  // Remove duplicate
+  result.allocations.forEach(allocation => allocation.videos = lodash.uniq(allocation.videos))
   result.nbCS = result.allocations.length;
   return result;
 }
