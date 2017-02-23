@@ -20,6 +20,7 @@ function apply(fileName) {
     console.log('time:', (Date.now() - time) + 'ms');
     console.log('score:', score);
     console.log('---------- END ------------');
+    hashcode.saveFile(hashcode.streamResult(result), `${fileName.slice(0, -2)}out`);
     // const results = hashcode.streamResult(bestSlices);
     // hashcode.saveFile(results, `${process.argv[2].slice(0, -2)}out`);
     // console.log('--------- BEGIN -----------');
