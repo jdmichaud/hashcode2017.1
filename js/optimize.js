@@ -28,6 +28,8 @@ function rand_optimize(setup) {
     }
     result.allocations.push(allocation);
   }
+  // Filter empty allocation
+  result.allocations = result.allocations.filter(allocation => allocation.videos.length > 0);
   result.nbCS = result.allocations.length;
   return result;
 }
