@@ -68,7 +68,8 @@ function rank_optimize(setup) {
         allocations[fastest.csId] = [];
       }
       // Can we squeeze this video
-      if ((usage(allocations[fastest.csId]) + setup.vsizes[request.videoId]) <= setup.parameters.X) {
+      if ((usage(allocations[fastest.csId]) + setup.vsizes[request.videoId]) <= setup.parameters.X &&
+          allocations[fastest.csId].indexOf(request.videoId) == -1) {
         // Yes push it in the allocation
         allocations[fastest.csId].push(request.videoId);
         // Break the loop
@@ -84,7 +85,7 @@ function rank_optimize(setup) {
   // Filter empty allocation
   result.allocations = result.allocations.filter(allocation => allocation.videos.length > 0);
   // Remove duplicate
-  result.allocations.forEach(allocation => allocation.videos = lodash.uniq(allocation.videos))
+  // result.allocations.forEach(allocation => allocation.videos = lodash.uniq(allocation.videos))
   result.nbCS = result.allocations.length;
   return result;
 }
