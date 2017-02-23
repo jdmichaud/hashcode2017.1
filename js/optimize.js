@@ -8,7 +8,7 @@ function random(max) {
 function rand_optimize(setup) {
   const result = {};
   result.allocations = [];
-  const videos = lodash.cloneDeep(setup.vsizes);
+  const videos = setup.vsizes.map(x => true);
   for (let csId = 0; csId < setup.parameters.C; csId += 1) {
     const allocation = {};
     allocation.csId = csId;
@@ -16,14 +16,13 @@ function rand_optimize(setup) {
     let usage = 0;
     for (let videoId = videos.length - 1; videoId >= 0; videoId -= 1) {
       // Can we squeeze this video
-      console.log(usage + videos[videoId], setup.parameters.X);
-      if (usage + videos[videoId] <= setup.parameters.X) {
+      if (videos[videoId] && ((usage + setup.vsizes[videoId]) <= setup.parameters.X)) {
         // Yes push it in the allocation
         allocation.videos.push(videoId);
         // Increase usage of the current cache server
         usage += setup.vsizes[videoId];
         // Remove the video from the list
-        lodash.pullAt(videos, [videoId]);
+        videos[videoId] = false;
       }
     }
     result.allocations.push(allocation);
