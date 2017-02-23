@@ -74,12 +74,15 @@ function loadFile(filepath) {
   };
 }
 
-function streamResult(slices) {
-  let output = `${slices.length}`;
+function streamResult(result) {
+  let output = `${result.nbCS}`;
   // Build output
-  slices.forEach((slice) => {
+  result.allocations.forEach((allocation) => {
     output += '\n';
-    output += `${slice[0][0]} ${slice[0][1]} ${slice[1][0]} ${slice[1][1]}`;
+    output += `${allocation.csId}`;
+    allocation.videos.forEach((videoId) => {
+      output += ` ${videoId}`;
+    });
   });
   return output;
 }
