@@ -19,30 +19,58 @@ function fixEncoding(buffer) {
 function decodeParameters(line) {
   const values = line.split(/\W+/);
   return {
-    R: parseInt(values[0], 10),
-    C: parseInt(values[1], 10),
-    L: parseInt(values[2], 10),
-    H: parseInt(values[3], 10),
+    V: parseInt(values[0], 10),
+    E: parseInt(values[1], 10),
+    R: parseInt(values[2], 10),
+    C: parseInt(values[3], 10),
+    X: parseInt(values[4], 10),
   };
+}
+
+function loadEndpoint(lines, startIndex, endpoint) {
+  // Latency to DataCenter
+  endpoint.latencyToD = parseInt(lines[startIndex].split(/\W+/)[0], 10);
+  // Number of Cache Servers
+  endpoint.nbCS = parseInt(lines[startIndex].split(/\W+/)[1], 10);
+  endpoint.cacheServers = [];
+  for (let i = 0; i < endpoint.nbCS; i += 1) {
+    const cs = {};
+    cs.csId = parseInt(lines[startIndex + i + 1].split(/\W+/)[0], 10);
+    cs.latency = parseInt(lines[startIndex + i + 1].split(/\W+/)[1], 10);
+    endpoint.cacheServers.push(cs);
+  }
+  return startIndex + endpoint.nbCS + 1;
+}
+
+function loadRequest(lines, startIndex) {
+  const request = {};
+  request.videoId = parseInt(lines[startIndex].split(/\W+/)[0], 10);
+  request.endpointId = parseInt(lines[startIndex].split(/\W+/)[1], 10);
+  request.nbRequests = parseInt(lines[startIndex].split(/\W+/)[2], 10);
+  return request;
 }
 
 function loadFile(filepath) {
   const lines = fixEncoding(fs.readFileSync(filepath)).split('\n');
   const parameters = decodeParameters(lines[0]);
-  // Create the pizza
-  const pizza = Array(parameters.R);
-  for (let i = 0; i < parameters.R; i += 1) {
-    pizza[i] = new Array(parameters.C).fill('.');
+  const vsizes = lines[1].split(/\W+/).map(size => parseInt(size, 10));
+  // Create the Endpoint
+  const endpoints = Array(parameters.E);
+  let nextIndex = 2;
+  for (let i = 0; i < parameters.E; i += 1) {
+    endpoints[i] = {};
+    nextIndex = loadEndpoint(lines, nextIndex, endpoints[i]);
   }
-  // Load rest of file
-  for (let i = 0; i < parameters.R; i += 1) {
-    for (let j = 0; j < parameters.C; j += 1) {
-      pizza[i][j] = lines[i + 1][j];
-    }
+  // Load request
+  const requests = Array(parameters.E);
+  for (let j = 0; j < parameters.R; j += 1) {
+    requests[j] = loadRequest(lines, nextIndex + j);
   }
   return {
     parameters: parameters,
-    pizza: pizza,
+    endpoints: endpoints,
+    requests: requests,
+    vsizes: vsizes,
   };
 }
 
