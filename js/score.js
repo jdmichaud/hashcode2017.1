@@ -20,7 +20,7 @@ function getScore(input, output) {
         score += (endpoint.latencyToD - latency) * req.nbRequests;
     });
 
-    return score / nbRequests * 1000;
+    return parseInt(score / nbRequests * 1000);
 }
 
 
